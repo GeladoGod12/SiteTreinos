@@ -1,44 +1,268 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportMeal Pro Performance Engine</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    <title>SportMeal Pro | Ultra Performance Engine</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-dark: #05070a;
+            --bg-panel: #0f121d;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --danger: #ef4444;
+            --success: #10b981;
+            --border: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; }
+
+        .app-shell { display: grid; grid-template-columns: 400px 1fr; height: 100vh; }
+
+        /* Sidebar Estilizada */
+        .sidebar { 
+            background: var(--bg-panel); 
+            border-right: 1px solid var(--border); 
+            padding: 2rem; 
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .brand-header { display: flex; align-items: center; gap: 12px; }
+        .logo { background: var(--accent); padding: 8px; border-radius: 8px; box-shadow: 0 0 20px var(--accent-glow); }
+        .brand-header h2 { font-size: 1.4rem; font-weight: 900; letter-spacing: -1px; }
+
+        .form-section { background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); }
+        .section-tag { font-size: 0.6rem; color: var(--accent); font-weight: 800; letter-spacing: 2px; margin-bottom: 1rem; display: block; }
+        
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        label { display: block; font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.5rem; font-weight: 700; }
+        input, select { 
+            width: 100%; background: #000; border: 1px solid var(--border); 
+            padding: 10px; color: #fff; border-radius: 6px; font-size: 0.9rem;
+            transition: border 0.3s;
+        }
+        input:focus { border-color: var(--accent); outline: none; }
+
+        .btn-engine { 
+            width: 100%; background: var(--accent); color: #fff; border: none; 
+            padding: 1.2rem; border-radius: 10px; font-weight: 900; cursor: pointer;
+            text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-engine:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--accent-glow); }
+
+        /* Dashboard de Resultados */
+        .main-content { padding: 3rem; overflow-y: auto; background: radial-gradient(circle at top right, #111827, #05070a); }
+        
+        .dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem; }
+        .dashboard-header h1 { font-size: 3rem; font-weight: 900; line-height: 1; }
+        .status-badge { background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 6px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; border: 1px solid var(--success); }
+
+        .grid-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+        .kpi-card { background: var(--bg-panel); border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; position: relative; overflow: hidden; }
+        .kpi-card::after { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent); }
+        .kpi-card.highlight { background: var(--accent); color: white; }
+        .kpi-card.highlight .value { color: white; }
+        .kpi-card.highlight::after { display: none; }
+        .kpi-card label { color: var(--text-dim); font-size: 0.65rem; text-transform: uppercase; }
+        .value { font-size: 2rem; font-weight: 900; display: block; margin-top: 5px; }
+
+        .grid-details { display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; }
+        .panel { background: rgba(15, 18, 29, 0.6); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; }
+        .panel-h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; color: var(--accent); }
+
+        .data-list { display: flex; flex-direction: column; gap: 12px; }
+        .item-card { background: #000; padding: 1.2rem; border-radius: 12px; border-left: 3px solid var(--accent); }
+        .item-card h4 { font-size: 0.95rem; margin-bottom: 4px; }
+        .item-card p { font-size: 0.8rem; color: var(--text-dim); line-height: 1.4; }
+
+        .macro-tag { font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; margin-right: 5px; background: #1e293b; }
+
+        .hidden { display: none; }
+        .empty-state { text-align: center; margin-top: 100px; color: var(--text-dim); }
+        
+        /* Scrollbar Personalizada */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to SportMeal Pro</h1>
-        <nav>
-            <ul>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section id="features">
-            <h2>Our Features</h2>
-            <ul>
-                <li>Performance Tracking</li>
-                <li>Nutrition Planning</li>
-                <li>Workout Customization</li>
-            </ul>
-        </section>
-        <section id="about">
-            <h2>About Us</h2>
-            <p>SportMeal Pro is designed to enhance your athletic performance with personalized meal and workout plans.</p>
-        </section>
-        <section id="contact">
-            <h2>Contact Us</h2>
-            <p>Email: support@sportmealpro.com</p>
-            <p>Phone: (123) 456-7890</p>
-        </section>
+
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand-header">
+            <div class="logo"><i data-lucide="zap" color="white" size="20"></i></div>
+            <h2>ALPHA<span>CORE</span> <small style="font-size: 0.6rem; opacity: 0.5;">PRO v6.0</small></h2>
+        </div>
+
+        <form id="mainEngine">
+            <div class="form-section">
+                <span class="section-tag">01 - BIOMETRIA</span>
+                <div class="input-row">
+                    <div class="field"><label>Idade</label><input type="number" id="age" value="28"></div>
+                    <div class="field">
+                        <label>Gênero</label>
+                        <select id="gender">
+                            <option value="male">Masculino</option>
+                            <option value="female">Feminino</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="field"><label>Peso (kg)</label><input type="number" id="weight" step="0.1" value="82"></div>
+                    <div class="field"><label>Altura (cm)</label><input type="number" id="height" value="182"></div>
+                </div>
+            </div>
+
+            <div class="form-section" style="margin-top: 1rem;">
+                <span class="section-tag">02 - PERFORMANCE</span>
+                <div class="field" style="margin-bottom: 1rem;">
+                    <label>Esporte Foco</label>
+                    <select id="sport">
+                        <option value="futebol_competitivo">Futebol (Alta Intensidade)</option>
+                        <option value="bodybuilding_hipertrofia">Bodybuilding (Foco Massa)</option>
+                        <option value="triatlo_endurance">Endurance (Triatlo/Corrida)</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Défice / Superávit</label>
+                    <select id="goal">
+                        <option value="0">Manutenção (Performance)</option>
+                        <option value="-500">Cutting (-500 kcal)</option>
+                        <option value="400">Bulking (+400 kcal)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-engine" style="margin-top: 1.5rem;">
+                Processar Dados <i data-lucide="cpu" size="18"></i>
+                
+            </button>
+        </form>
+    </aside>
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div>
+                <p style="color:var(--accent); font-weight:800; font-size:0.7rem; letter-spacing:3px;">RELATÓRIO DE SISTEMA</p>
+                <h1 id="out_sportName">AGUARDANDO INPUT</h1>
+            </div>
+            <div class="status-badge"><span style="display:inline-block; width:8px; height:8px; background:var(--success); border-radius:50%; margin-right:5px;"></span> NÚCLEO ATIVO</div>
+        </header>
+
+        <div id="resultsWrapper" class="hidden">
+            <div class="grid-kpi">
+                <div class="kpi-card highlight">
+                    <label>TDEE / Gasto Total</label>
+                    <span class="value" id="out_tdee">0</span>
+                    <small>kcal / dia</small>
+                </div>
+                <div class="kpi-card">
+                    <label>Proteína (2.2g/kg)</label>
+                    <span class="value" id="out_prot">0</span>
+                    <small>gramas</small>
+                </div>
+                <div class="kpi-card">
+                    <label>Gordura (0.8g/kg)</label>
+                    <span class="value" id="out_fat">0</span>
+                    <small>gramas</small>
+                </div>
+                <div class="kpi-card">
+                    <label>Hidratação</label>
+                    <span class="value" id="out_water">0</span>
+                    <small>Litros / dia</small>
+                </div>
+            </div>
+
+            <div class="grid-details">
+                <div class="panel">
+                    <h3 class="panel-h3"><i data-lucide="shield-check"></i> Protocolo de Treino Alpha</h3>
+                    <div id="workoutContainer" class="data-list"></div>
+                </div>
+                <div class="panel">
+                    <h3 class="panel-h3"><i data-lucide="coffee"></i> Janela Nutricional Estratégica</h3>
+                    <div id="dietContainer" class="data-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="welcome" class="empty-state">
+            <i data-lucide="activity" size="64" color="#1e293b"></i>
+            <h2 style="margin-top:1rem; color:#1e293b;">Motor de Biometria Desligado</h2>
+            <p>Insira os parâmetros ao lado para gerar o algoritmo de performance.</p>
+        </div>
     </main>
-    <footer>
-        <p>&copy; 2026 SportMeal Pro. All rights reserved.</p>
-    </footer>
+</div>
+
+<script>
+
+    // ENGINE LOGIC
+    document.getElementById('mainEngine').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 1. Coleta
+        const data = {
+            age: parseInt(document.getElementById('age').value),
+            weight: parseFloat(document.getElementById('weight').value),
+            height: parseInt(document.getElementById('height').value),
+            gender: document.getElementById('gender').value,
+            sport: document.getElementById('sport').value,
+            goalOffset: parseInt(document.getElementById('goal').value)
+        };
+
+        // 2. Cálculo Mifflin-St Jeor (BMR)
+        let bmr = (10 * data.weight) + (6.25 * data.height) - (5 * data.age);
+        bmr = (data.gender === 'male') ? bmr + 5 : bmr - 161;
+
+        // 3. TDEE e Macronutrientes
+        const sportData = DATABASE[data.sport] || DATABASE.futebol_competitivo;
+        const activityFactor = 1.6; // Nível Atleta
+        const tdee = Math.round((bmr * activityFactor) + data.goalOffset);
+        
+        const prot = Math.round(data.weight * 2.2);
+        const fat = Math.round(data.weight * 0.8);
+        const carb = Math.round((tdee - (prot * 4) - (fat * 9)) / 4);
+        const water = (data.weight * 0.045).toFixed(1);
+
+        // 4. Renderização UI
+        document.getElementById('welcome').classList.add('hidden');
+        document.getElementById('resultsWrapper').classList.remove('hidden');
+
+        document.getElementById('out_sportName').innerText = sportData.name;
+        document.getElementById('out_tdee').innerText = tdee;
+        document.getElementById('out_prot').innerText = prot;
+        document.getElementById('out_fat').innerText = fat;
+        document.getElementById('out_water').innerText = water;
+
+        // Render Lists
+        renderList('workoutContainer', sportData.workout);
+        renderList('dietContainer', sportData.diet);
+
+        lucide.createIcons();
+    });
+
+    function renderList(id, items) {
+        const container = document.getElementById(id);
+        container.innerHTML = items.map(i => `
+            <div class="item-card">
+                <h4>${i.t}</h4>
+                <p style="color:var(--accent); font-weight:700; margin-bottom:5px;">${i.c}</p>
+                <p>${i.d}</p>
+            </div>
+        `).join('');
+    }
+
+    // Inicialização de Ícones
+    lucide.createIcons();
+</script>
+
 </body>
 </html>
